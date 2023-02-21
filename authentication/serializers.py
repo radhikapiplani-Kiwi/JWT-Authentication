@@ -148,11 +148,17 @@ class CreateBookSerializer(serializers.ModelSerializer):
                                         error_messages=BOOK_VALIDATION_ERROR['author_phone'])
 
     def validate_name_of_book(self, value):
+        """
+        validates the name_of_book as first letter is in upper case
+        """
         if not value[0].isupper():
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['name_of_book']['invalid'])
         return value
 
     def validate_book_price(self,value):
+        """
+        validates the book_price as it contains only digits
+        """
         if not all(char.isdigit() for char in value):
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['book_price']['invalid'])
         return value
@@ -166,6 +172,9 @@ class CreateBookSerializer(serializers.ModelSerializer):
         return value
 
     def validate_author_phone(self,value):
+        """
+        validates author_phone
+        """
         pattern = r'^\+?1?\d{9,15}$'
         if not re.match(pattern, value):
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['author_phone']['invalid'])
@@ -209,11 +218,17 @@ class UpdateBookSerializer(serializers.ModelSerializer):
                                         error_messages=BOOK_VALIDATION_ERROR['author_phone'])
 
     def validate_name_of_book(self, value):
+        """
+        validates the name_of_book as first letter is in upper case
+        """
         if not value[0].isupper():
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['name_of_book']['invalid'])
         return value
 
     def validate_book_price(self,value):
+        """
+        validates the book_price as it contains only digits
+        """
         if not all(char.isdigit() for char in value):
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['book_price']['invalid'])
         return value
@@ -227,6 +242,9 @@ class UpdateBookSerializer(serializers.ModelSerializer):
         return value
 
     def validate_author_phone(self,value):
+        """
+        validates author_phone
+        """
         pattern = r'^\+?1?\d{9,15}$'
         if not re.match(pattern, value):
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['author_phone']['invalid'])
