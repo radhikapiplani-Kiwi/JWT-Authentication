@@ -11,17 +11,17 @@ class SignupSerializer(serializers.ModelSerializer):
     serializer for Registering requested user
     """
     first_name = serializers.CharField(max_length=20, required=True,allow_blank=False,trim_whitespace=True,
-                                        error_messages=VALIDATION['first_name'])
+                                        error_messages=SIGNUP_VALIDATION_ERROR['first_name'])
     last_name = serializers.CharField(max_length=20, required=True,allow_blank=False,trim_whitespace=True,
-                                        error_messages=VALIDATION['last_name'])
+                                        error_messages=SIGNUP_VALIDATION_ERROR['last_name'])
     username = serializers.CharField(min_length=4,max_length=20, required=True,allow_blank=False,
-                                        error_messages=VALIDATION['username'])
-    email = serializers.EmailField(max_length=20, required=True,
-                                        error_messages=VALIDATION['email'])
-    password = serializers.CharField(write_only=True, min_length=8,
-                                         error_messages=VALIDATION['password'])
+                                        error_messages=SIGNUP_VALIDATION_ERROR['username'])
+    email = serializers.EmailField(max_length=20, required=True,allow_blank=False,
+                                        error_messages=SIGNUP_VALIDATION_ERROR['email'])
+    password = serializers.CharField(write_only=True, min_length=8,allow_blank=False,
+                                         error_messages=SIGNUP_VALIDATION_ERROR['password'])
     confirm_password = serializers.CharField(write_only=True, min_length=8,allow_null=False,
-                                         error_messages=VALIDATION['confirm_password'])
+                                         error_messages=SIGNUP_VALIDATION_ERROR['confirm_password'])
 
     def validate(self, attrs):
         """
@@ -29,7 +29,7 @@ class SignupSerializer(serializers.ModelSerializer):
         else: return validation error
         """
         if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError(VALIDATION["not-match"])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR["not-match"])
         return attrs
 
     def validate_first_name(self, value):
@@ -37,7 +37,7 @@ class SignupSerializer(serializers.ModelSerializer):
         Check that the first name contains only letters
         """
         if not all(char.isalpha() for char in value):
-            raise serializers.ValidationError(VALIDATION['first_name']['invalid'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['first_name']['invalid'])
         return value
 
     def validate_last_name(self, value):
@@ -45,7 +45,7 @@ class SignupSerializer(serializers.ModelSerializer):
         Check that the last name contains only letters
         """
         if not all(char.isalpha() for char in value):
-            raise serializers.ValidationError(VALIDATION['last_name']['invalid'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['last_name']['invalid'])
         return value
 
     def validate_username(self, value):
@@ -55,9 +55,9 @@ class SignupSerializer(serializers.ModelSerializer):
         """
         username_regex = r'^[a-zA-Z0-9_-]{4,20}$'
         if not re.match(username_regex, value):
-            raise serializers.ValidationError(VALIDATION['username']['invalid'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['username']['invalid'])
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(VALIDATION['username']['exits'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['username']['exits'])
         return value
 
     def validate_email(self, value):
@@ -66,7 +66,7 @@ class SignupSerializer(serializers.ModelSerializer):
         else : return validation error
         """
         if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(VALIDATION['email']['exits'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['email']['exits'])
         return value
 
     def validate_password(self, value):
@@ -75,7 +75,7 @@ class SignupSerializer(serializers.ModelSerializer):
         else : return validation error
         """
         if not re.match(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+=-])[0-9a-zA-Z!@#$%^&*()_+=-]{8,}$', value):
-            raise serializers.ValidationError(VALIDATION['password']['invalid'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['password']['invalid'])
         return value
 
     def validate_confirm_password(self, value):
@@ -84,7 +84,7 @@ class SignupSerializer(serializers.ModelSerializer):
         else : return validation error
         """
         if not re.match(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+=-])[0-9a-zA-Z!@#$%^&*()_+=-]{8,}$', value):
-            raise serializers.ValidationError(VALIDATION['confirm_password']['invalid'])
+            raise serializers.ValidationError(SIGNUP_VALIDATION_ERROR['confirm_password']['invalid'])
         return value
 
     def create(self, validated_data):
@@ -110,7 +110,7 @@ class LoginSerializer(serializers.ModelSerializer):
     """
     serializer for login a requested user
     """
-    username = serializers.CharField(max_length=20, required=True,allow_null=False)
+    username = serializers.CharField(max_length=20, required=True,)
     password = serializers.CharField(max_length=20, required=True,allow_null=False)
 
     def validate(self, data):
@@ -123,7 +123,7 @@ class LoginSerializer(serializers.ModelSerializer):
             password=data['password']
         )
         if not user:
-            raise serializers.ValidationError(VALIDATION["Login"])
+            raise serializers.ValidationError(LOGIN_VALIDATION_ERROR["Login"])
         return user
 
     class Meta:
@@ -138,10 +138,39 @@ class CreateBookSerializer(serializers.ModelSerializer):
     """
     Serializer class for Creating Book
     """
-    name_of_book = serializers.CharField(max_length=20, required=True)
-    book_price = serializers.CharField(max_length=100, required=True)
-    authors_name = serializers.CharField(max_length=20, required=True)
-    author_phone = serializers.CharField(max_length=20, required=True)
+    name_of_book = serializers.CharField(max_length=20, required=True,allow_blank=False,trim_whitespace=True,
+                                        error_messages=BOOK_VALIDATION_ERROR['name_of_book'])
+    book_price = serializers.CharField(max_length=100, required=True,allow_blank=False,
+                                        error_messages=BOOK_VALIDATION_ERROR['book_price'])
+    authors_name = serializers.CharField(max_length=20, required=True,allow_blank=False,trim_whitespace=True,
+                                        error_messages=BOOK_VALIDATION_ERROR['authors_name'])
+    author_phone = serializers.CharField(max_length=20, required=True,allow_blank=False,
+                                        error_messages=BOOK_VALIDATION_ERROR['author_phone'])
+
+    def validate_name_of_book(self, value):
+        if not value[0].isupper():
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['name_of_book']['invalid'])
+        return value
+
+    def validate_book_price(self,value):
+        if not all(char.isdigit() for char in value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['book_price']['invalid'])
+        return value
+
+    def validate_authors_name(self, value):
+        """
+        Check that the first name contains only letters
+        """
+        if not all(char.isalpha() for char in value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['authors_name']['invalid'])
+        return value
+
+    def validate_author_phone(self,value):
+        pattern = r'^\+?1?\d{9,15}$'
+        if not re.match(pattern, value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['author_phone']['invalid'])
+        return value
+
 
     def create(self, validated_data):
         """
@@ -170,10 +199,38 @@ class UpdateBookSerializer(serializers.ModelSerializer):
     """
     Serializer class for Updating Book
     """
-    name_of_book = serializers.CharField(max_length=20, required=True)
-    book_price = serializers.CharField(max_length=100, required=True)
-    authors_name = serializers.CharField(max_length=20, required=True)
-    author_phone = serializers.CharField(max_length=20, required=True)
+    name_of_book = serializers.CharField(max_length=20, required=True,allow_blank=False,trim_whitespace=True,
+                                        error_messages=BOOK_VALIDATION_ERROR['name_of_book'])
+    book_price = serializers.CharField(max_length=100, required=True ,allow_blank=False,
+                                        error_messages=BOOK_VALIDATION_ERROR['book_price'])
+    authors_name = serializers.CharField(max_length=20, required=True ,allow_blank=False,trim_whitespace=True,
+                                        error_messages=BOOK_VALIDATION_ERROR['authors_name'])
+    author_phone = serializers.CharField(max_length=20, required=True ,allow_blank=False,
+                                        error_messages=BOOK_VALIDATION_ERROR['author_phone'])
+
+    def validate_name_of_book(self, value):
+        if not value[0].isupper():
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['name_of_book']['invalid'])
+        return value
+
+    def validate_book_price(self,value):
+        if not all(char.isdigit() for char in value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['book_price']['invalid'])
+        return value
+
+    def validate_authors_name(self, value):
+        """
+        Check that the first name contains only letters
+        """
+        if not all(char.isalpha() for char in value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['authors_name']['invalid'])
+        return value
+
+    def validate_author_phone(self,value):
+        pattern = r'^\+?1?\d{9,15}$'
+        if not re.match(pattern, value):
+            raise serializers.ValidationError(BOOK_VALIDATION_ERROR['author_phone']['invalid'])
+        return value
 
     def update(self, instance, validated_data):
         """

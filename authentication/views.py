@@ -9,7 +9,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
 class SignupView(viewsets.ModelViewSet):
     queryset = User
     serializer_class = SignupSerializer
@@ -29,7 +28,6 @@ class SignupView(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class LoginView(viewsets.ModelViewSet):
     queryset = User
@@ -55,11 +53,10 @@ class LoginView(viewsets.ModelViewSet):
                              'status': status.HTTP_201_CREATED})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         """
@@ -112,7 +109,7 @@ class BookViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.update(ins, serializer.validated_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'msg': MESSAGE_1}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(MESSAGES["MESSAGE_1"], status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, *args, **kwargs):
         """
@@ -123,7 +120,7 @@ class BookViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.update(ins, serializer.validated_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'msg': MESSAGE_2}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(MESSAGES["MESSAGE_2"], status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -131,4 +128,4 @@ class BookViewSet(viewsets.ModelViewSet):
         """
         data = self.get_object()
         data.delete()
-        return Response({'msg': MESSAGE_3})
+        return Response(MESSAGES["MESSAGE_3"])

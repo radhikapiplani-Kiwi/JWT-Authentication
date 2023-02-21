@@ -1,15 +1,18 @@
 """
 messages
 """
-MESSAGE_1 = "complete update"
-MESSAGE_2 = 'partial data updated'
-MESSAGE_3 = 'data deleted'
+MESSAGES={
+
+"MESSAGE_1" : "complete update",
+"MESSAGE_2 ": "partial data updated",
+"MESSAGE_3" : "data deleted"
+
+}
 """
 validation errors
 """
-VALIDATION_ERROR="Password fields didn't match."
 
-VALIDATION = {
+SIGNUP_VALIDATION_ERROR = {
   'first_name': {
         "blank": "first_name_BLANK",
         "invalid": "first_name_INVALID",
@@ -42,7 +45,32 @@ VALIDATION = {
         "blank": "Email_BLANK",
         "required": "Email_REQUIRED",
          "exits":"email_EXISTS"
-    },
-    "Login":"Login_INVALID"
+    }
 
+}
+LOGIN_VALIDATION_ERROR = {
+        "Login":"Login_INVALID"
+
+}
+BOOK_VALIDATION_ERROR = {
+  'name_of_book': {
+        "blank": "name_of_book_BLANK",
+        "invalid": "name_of_book_INVALID",
+        "required": "name_of_book_REQUIRED",
+    },
+  'book_price': {
+        "blank": "book_price_BLANK",
+        "invalid": "book_price_INVALID",
+        "required": "book_price_REQUIRED",
+    },
+   'authors_name': {
+        "blank": "authors_name_BLANK",
+        "invalid": "authors_name_INVALID",
+        "required": "authors_name_REQUIRED"
+    },
+  'author_phone': {
+        "blank": "author_phone_BLANK",
+        "invalid": "author_phone_INVALID",
+        "required": "author_phone_REQUIRED"
+    }
 }
