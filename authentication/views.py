@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class SignupView(viewsets.ModelViewSet):
     queryset = User
     serializer_class = SignupSerializer
+    http_method_names = ['post']
 
     def get_queryset(self):
         """
@@ -32,6 +33,7 @@ class SignupView(viewsets.ModelViewSet):
 class LoginView(viewsets.ModelViewSet):
     queryset = User
     serializer_class = LoginSerializer
+    http_method_names = ['post']
 
     def get_queryset(self):
         """
@@ -55,6 +57,7 @@ class LoginView(viewsets.ModelViewSet):
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
