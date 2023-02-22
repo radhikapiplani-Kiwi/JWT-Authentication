@@ -16,7 +16,7 @@ class SignupSerializer(serializers.ModelSerializer):
                                         error_messages=SIGNUP_VALIDATION_ERROR['last_name'])
     username = serializers.CharField(min_length=4,max_length=20, required=True,allow_blank=False,
                                         error_messages=SIGNUP_VALIDATION_ERROR['username'])
-    email = serializers.EmailField(max_length=20, required=True,allow_blank=False,
+    email = serializers.EmailField(max_length=50, required=True,allow_blank=False,
                                         error_messages=SIGNUP_VALIDATION_ERROR['email'])
     password = serializers.CharField(write_only=True, min_length=8,allow_blank=False,
                                          error_messages=SIGNUP_VALIDATION_ERROR['password'])
@@ -167,7 +167,8 @@ class CreateBookSerializer(serializers.ModelSerializer):
         """
         Check that the first name contains only letters
         """
-        if not all(char.isalpha() for char in value):
+        pattern = r'^[a-zA-Z]+(\s[a-zA-Z]+)?$'
+        if not re.match(pattern, value):
             raise serializers.ValidationError(BOOK_VALIDATION_ERROR['authors_name']['invalid'])
         return value
 
